@@ -1,0 +1,23 @@
+name: 'Standard Java Build and Test'
+description: 'Standardized workflow for Java builds'
+inputs:
+  java-version:
+    description: 'Java version to use'
+    required: true
+  build-command:
+    description: 'Build command to run'
+    required: true
+  distribution:
+    description: 'Java distribution'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.distribution }}
+    - name: Run build command
+      run: ${{ inputs.build-command }}
