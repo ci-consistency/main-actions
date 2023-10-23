@@ -21,3 +21,4 @@ runs:
         distribution: ${{ inputs.distribution }}
     - name: Run build command
       run: ${{ inputs.build-command }}
+      shell: bash
