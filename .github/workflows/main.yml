@@ -1,0 +1,39 @@
+name: Java CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    inputs:
+      java-version:
+        description: 'Java version to use (e.g., 8, 11, 18)'
+        required: true
+      build-tool:
+        description: 'Build tool to use (maven or gradle)'
+        required: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.java-version }}
+          distribution: 'adopt'
+
+      - name: Build with Maven or Gradle
+        run: |
+          if [[ "${{ inputs.build-tool }}" == "maven" ]]; then
+            mvn clean test jacoco:report
+          elif [[ "${{ inputs.build-tool }}" == "gradle" ]]; then
+            gradle clean build
+          else
+            echo "Unsupported build tool"
+            exit 1
+          fi
