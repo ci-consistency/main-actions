@@ -1,39 +1,23 @@
-name: Java CI
+name: 'Standard Java Build and Test'
+description: 'Standardized workflow for Java builds'
+inputs:
+  java-version:
+    description: 'Java version to use'
+    required: true
+  build-command:
+    description: 'Build command to run'
+    required: true
+  distribution:
+    description: 'Java distribution'
+    required: true
 
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    inputs:
-      java-version:
-        description: 'Java version to use (e.g., 8, 11, 18)'
-        required: true
-      build-tool:
-        description: 'Build tool to use (maven or gradle)'
-        required: true
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ inputs.java-version }}
-          distribution: 'adopt'
-
-      - name: Build with Maven or Gradle
-        run: |
-          if [[ "${{ inputs.build-tool }}" == "maven" ]]; then
-            mvn clean test jacoco:report
-          elif [[ "${{ inputs.build-tool }}" == "gradle" ]]; then
-            gradle clean build
-          else
-            echo "Unsupported build tool"
-            exit 1
-          fi
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: ${{ inputs.distribution }}
+    - name: Run build command
+      run: ${{ inputs.build-command }}
